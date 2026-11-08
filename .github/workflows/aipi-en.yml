@@ -1,0 +1,37 @@
+name: aipi-en-firmware
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:v6.1
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suffix: en
+            extra: --language en-US
+          - suffix: en-hiesp
+            extra: --language en-US --wake-word wn9_hiesp
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build aipi-lite variant
+        env:
+          MATRIX_EXTRA: ${{ matrix.extra }}
+        run: |
+          source "$IDF_PATH/export.sh"
+          idf.py --version
+          python scripts/build.py aipi-lite --name aipi-lite $MATRIX_EXTRA --zip
+
+      - name: List build outputs
+        run: ls -la releases/ build/ 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: firmware-${{ matrix.suffix }}
+          path: releases/
+          if-no-files-found: error
