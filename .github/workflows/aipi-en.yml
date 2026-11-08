@@ -26,7 +26,7 @@ jobs:
         run: |
           source "$IDF_PATH/export.sh"
           idf.py --version
-          python scripts/build.py aipi-lite --name aipi-lite $MATRIX_EXTRA --zip
+          python scripts/build.py xorigin/aipi-lite --name aipi-lite $MATRIX_EXTRA --zip
 
       - name: List build outputs
         run: ls -la releases/ build/ 2>/dev/null || true
